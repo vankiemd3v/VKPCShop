@@ -1,0 +1,409 @@
+﻿@using VKPCShop.WebApp.Constant;
+@using VKPCShop.WebApp.Dtos;
+@{
+    int price = ViewBag.PriceCheck;
+    var brands = new List<string>();
+    if (ViewBag.ListBrand != null)
+    {
+        foreach (var item in ViewBag.ListBrand)
+        {
+            brands.Add(item);
+        }
+    }
+    else
+    {
+        brands = null;
+    }
+    int categoryId = 0;
+    if (ViewBag.CategoryId != null)
+    {
+        categoryId = ViewBag.CategoryId;
+    }
+    var idUnCheck = new List<BrandDto>();
+    @foreach (var item in ViewBag.Brand)
+    {
+        idUnCheck.Add(item);
+    }
+
+    bool ascending = false;
+    bool descending = false;
+    bool bestSell = false;
+    @if (ViewBag.FilterName == FilterProductConstant.Ascending)
+    {
+        ascending = true;
+    }
+    @if (ViewBag.FilterName == FilterProductConstant.Descending)
+    {
+        descending = true;
+    }
+    @if (ViewBag.FilterName == FilterProductConstant.BestSell)
+    {
+        bestSell = true;
+    }
+}
+<style>
+    .btn-outStock {
+        padding: 0.5rem 0;
+        text-align: center;
+        background-color: rgb(255, 255, 255);
+        border: 1px solid rgb(195, 20, 20);
+        border-radius: 5px;
+        text-decoration: none;
+        color: rgb(195, 20, 20);
+        font-size: 12px;
+        font-weight: 900;
+        display: block;
+    }
+
+        .btn-outStock a {
+            text-decoration: none;
+            color: rgb(20, 53, 195);
+            font-size: 12px;
+        }
+    .container {
+        width: 250px;
+        height: 38px;
+        margin: 100px auto;
+    }
+
+    div label input {
+        margin-right: 100px;
+    }
+
+    .cat {
+        background-color: white;
+        overflow: hidden;
+        float: left;
+        width: 100%;
+    }
+
+        .cat label {
+            float: left;
+            line-height: 2em;
+            width: 48%;
+            height: 2em;
+            border: 1px solid silver;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+            .cat label span {
+                text-align: center;
+                display: block;
+            }
+
+            .cat label input {
+                position: absolute;
+                display: none;
+                color: silver !important;
+            }
+                /* selects all of the text within the input element and changes the color of the text */
+                .cat label input + span {
+                    color: black;
+                }
+
+
+        /* This will declare how a selected input will look giving generic properties */
+        .cat input:checked + span {
+            color: #ffffff;
+            text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+        }
+
+
+    /*
+    This following statements selects each category individually that contains an input element that is a checkbox and is checked (or selected) and chabges the background color of the span element.
+    */
+
+    .action input:checked + span {
+        background-color: #ab1e1e;
+        border-radius: 5px;
+    }
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+
+    <link rel="stylesheet" href="/client/css/themify-icons.css">
+    <link rel="stylesheet" href="/client/css/style.css">
+    <title>VKStore.vn</title>
+</head>
+<body>
+    <header>
+        <div class="header-position-fixed">
+            <div class="box-search-fixed">
+                <a href="/Home" class="icon-back-category"><i class="ti-arrow-left"></i></a>
+                <div class="search-fixed">
+                    @using(Html.BeginForm("Index", "Product", FormMethod.Post))
+                    {
+                        <i class="ti-search" type="submit"></i>
+                        <input class="inputSearch-fixed" type="text" name="keyword" value="@ViewBag.Keyword" placeholder="Nhập tên sản phẩm..." />
+                    }
+                </div>
+                <a href="/Cart" class="icon-cart-category"><i class="ti-shopping-cart"></i><span class="cartNumber">@ViewBag.CartNumber</span></a>
+            </div>
+            <div class="filter-modal">
+                <div class="simple-menu">
+                    <ul class="simple-menu-list">
+                        <li>
+                            <a href="#" target="_blank">
+                                @ViewBag.FilterName 
+                                <i class="ti-angle-down" style="font-size: 8px; padding-left: 1%; font-weight: bold;"></i>
+     </a>
+                            
+                            @if(brands != null)
+                            {
+                                <ul class="sub-menu">
+                                    @using (Html.BeginForm("Index", "Product", FormMethod.Get))
+                                    {
+                                        @foreach (var item in brands)
+                                        {
+                                            <input type="hidden" name="categoryId" value="@categoryId" />
+                                            <input type="hidden" name="price" value="@price" />
+                                            <input type="hidden" name="brands" value="@item" />
+                                        }
+                                        <li><button type="submit">Mặc định</button></li>
+                                    }                   @*Mặc định*@
+                                    @using (Html.BeginForm("Index", "Product", FormMethod.Get))
+                                    {
+                                        @foreach(var item in brands)
+                                        {
+                                            <input type="hidden" name="keyword" value="@ViewBag.Keyword" />
+                                            <input type="hidden" name="categoryId" value="@categoryId" />
+                                            <input type="hidden" name="ascending" value="true" />
+                                            <input type="hidden" name="price" value="@price" />
+                                            <input type="hidden" name="brands" value="@item" />
+                                        }
+                                        <li><button type="submit">Giá từ thấp đến cao</button></li>
+                                    }                   @*Giá từ thấp đến cao*@
+                                    @using (Html.BeginForm("Index", "Product", FormMethod.Get))
+                                    {
+                                        @foreach (var item in brands)
+                                        {
+                                            <input type="hidden" name="keyword" value="@ViewBag.Keyword" />
+                                            <input type="hidden" name="categoryId" value="@categoryId" />
+                                            <input type="hidden" name="descending" value="true" />
+                                            <input type="hidden" name="price" value="@price" />
+                                            <input type="hidden" name="brands" value="@item" />
+                                        }
+                                        <li><button type="submit">Giá từ cao đến thấp</button></li>
+                                    }                   @*Giá từ cao đến thấp*@
+                                    @using (Html.BeginForm("Index", "Product", FormMethod.Get))
+                                    {
+                                        @foreach (var item in brands)
+                                        {
+                                            <input type="hidden" name="keyword" value="@ViewBag.Keyword" />
+                                            <input type="hidden" name="categoryId" value="@categoryId" />
+                                            <input type="hidden" name="bestSell" value="true" />
+                                            <input type="hidden" name="price" value="@price" />
+                                            <input type="hidden" name="brands" value="@item" />
+                                        }
+                                        <li><button type="submit">Bán chạy nhất</button></li>
+                                    }                   @*Bán chạy nhất*@
+                                </ul>
+                            }
+                            else
+                            {
+                                <ul class="sub-menu">
+                                    <li><a href="/Product/Index?categoryId=@categoryId&keyword=@ViewBag.Keyword">Mặc định @*<span><i class="ti-check"></i></span>*@</a></li>
+                                    <li><a href="/Product/Index?categoryId=@categoryId&ascending=true&price=@price&keyword=@ViewBag.Keyword">Giá từ thấp đến cao</a></li>
+                                    <li><a href="/Product/Index?categoryId=@categoryId&descending=true&price=@price&keyword=@ViewBag.Keyword">Giá từ cao đến thấp</a></li>
+                                    <li><a href="/Product/Index?categoryId=@categoryId&bestSell=true&price=@price&keyword=@ViewBag.Keyword">Bán chạy nhất</a></li>
+                                </ul>
+                            }
+                        </li>
+                    </ul>
+                </div>
+                <div class="filter-category">
+                    <p><a href="#filter-category" rel="modal:open">Bộ lọc <i class="ti-filter"></i></a></p>
+                </div>
+                <div id="filter-category" class="modal">
+                    @using (Html.BeginForm("Index", "Product", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+                    {
+                        <input type="hidden" name="keyword" value="@ViewBag.Keyword" />
+                        <input type="hidden" value="@categoryId" name="categoryId" />
+                        @if (ViewBag.FilterName == FilterProductConstant.Ascending)
+                        {
+                            <input type="hidden"  value="true" name="ascending" />
+                        }
+                        @if (ViewBag.FilterName == FilterProductConstant.Descending)
+                        {
+                            <input type="hidden"  value="true" name="descending" />
+                        }
+                        @if (ViewBag.FilterName == FilterProductConstant.BestSell)
+                        {
+                            <input type="hidden"  value="true" name="bestSell" />
+                        }
+                        <div class="filter-by-price">
+                            <h4>Khoảng giá</h4>
+                            <div class="filter-price">
+                                <span class="filter-min-price">0đ</span>
+                                <span class="filter-max-price"><span id="demo"></span>.000.000đ</span>
+                            </div>
+                            <div class="slidecontainer">
+                                <input type="range" min="0" max="30" value="@price" name="price" id="myRange">
+                            </div>
+
+                        </div>
+                        <div class="filter-by-brand">
+                            <h4>Thương hiệu</h4>
+                            <div class="cat action">
+                                @foreach (var item in ViewBag.Brand)
+                                {
+                                    if(ViewBag.BrandChecked != null)
+                                    {
+                                        
+                                        foreach (var jtem in ViewBag.BrandChecked)
+                                        {
+                                            if(item.Name == jtem.Name)
+                                            {
+                                                idUnCheck.Remove(item);
+                                                <label>
+                                                    <input type="checkbox" name="brands" value="@item.Name" id="checkbox_@item.Id" checked/>
+                                                    <span>@item.Name</span>
+                                                </label>
+                                            }
+                                        }
+                                       
+                                    }
+                                    else
+                                    {
+                                        <label>
+                                            <input type="checkbox" name="brands" value="@item.Name" id="checkbox_@item.Id" />
+                                            <span>@item.Name</span>
+                                        </label>
+                                    }
+                                }
+                                @if(idUnCheck.Count < ViewBag.Brand.Count)
+                                {
+                                    @foreach (var item in idUnCheck)
+                                    {
+                                        <label>
+                                            <input type="checkbox" name="brands" value="@item.Name" id="checkbox_@item.Id" />
+                                            <span>@item.Name</span>
+                                        </label>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="apply-filter">
+                            
+                            <a href="/Product/Index?categoryId=@categoryId&ascending=@ascending&descending=@descending&bestSell=@bestSell&keyword=@ViewBag.Keyword" class="btn-delete-filter">Xóa bộ lọc</a>
+                            <button type="submit" class="btn-apply">Áp dụng</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div style="margin-top: 6rem;"></div>
+        <div class="for-you">
+            @foreach(var item in Model)
+            {
+                <a href="/Product/Detail?id=@item.Id">
+                    <div class="for-you-item">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <p class="product-item-brand">@item.BrandName</p>
+                        <p class="for-you-name">@item.Name</p>
+                        <div class="for-you-price">
+                            
+                            @if (item.SalePrice > 0)
+                            {
+                                <span class="for-you-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                                <p class="for-you-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                            }
+                            else
+                            {
+                                <span class="product-item-price">@item.Price.ToString("N0")<sup>₫</sup></span>
+                            }
+                        </div>
+                        @if (item.Quantity > 0)
+                        {
+                            <a href="#" class="btn-add-cart-flex" id="@item.Id">
+                                Thêm vào giỏ
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="btn-outStock">
+                                Hết hàng
+                            </a>
+                        }
+                    </div>
+                </a>
+            }
+        </div>
+    </main>
+    <!-- <div class="is-mobile-menu"></div> -->
+
+
+    <div class="mobile-menu">
+        <ul class="menu-item">
+            <li>
+                <a href="/Home">
+                    <span class="ti-home"></span>
+                    <p>TRANG CHỦ</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item">
+            <li>
+                <a href="/Category">
+                    <span class="ti-layout-grid2"></span>
+                    <p>DANH MỤC</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item ">
+            <li>
+                <a href="/Cart">
+                    <span class="ti-shopping-cart"></span>
+                    <p>GIỎ HÀNG (<span class="cartNumber" style="font-size:9px;">@ViewBag.CartNumber</span>)</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item">
+            <li>
+                <a href="/Cart/Build">
+                    <span class="ti-settings"></span>
+                    <p>BUILD PC</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item">
+            <li>
+                <a href="/User">
+                    <span class="ti-user"></span>
+                    <p>TÀI KHOẢN</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+        var slider = new Slider("#ex6");
+        slider.on("slide", function(sliderValue) {
+            document.getElementById("ex6SliderVal").textContent = sliderValue;
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/notify.js"></script>
+    <script src="js/notify.min.js"></script>
+    <script>
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("demo");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function () {
+            output.innerHTML = this.value;
+        }
+    </script>
+</body>
+</html>

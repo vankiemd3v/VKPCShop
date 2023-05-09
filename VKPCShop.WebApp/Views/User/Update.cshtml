@@ -1,0 +1,82 @@
+﻿@using VKPCShop.WebApp.Dtos;
+@model UserDto
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/client/css/themify-icons.css">
+    <link rel="stylesheet" href="/client/css/style.css">
+    <title>VKPCShop</title>
+</head>
+<body>
+    <header>
+        <div class="wrapper">
+        </div>
+        <div class="title-cart">
+            @*@if (ViewBag.isBuy == "notBuy")
+            {
+                <a href="/User"><i class="ti-arrow-left icon-back"></i></a>
+            }
+            else
+            {
+                <a href="/Cart/CheckOut"><i class="ti-arrow-left icon-back"></i></a>
+            }*@
+            <h4>Thông tin cá nhân</h4>
+        </div>
+
+    </header>
+    <main>
+        @using (Html.BeginForm("Update", "User", FormMethod.Post))
+        {
+            <input type="hidden" name="isBuy" value="@ViewBag.isBuy" />
+            <input type="hidden" name="isBuild" value="@ViewBag.isBuild" />
+
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="image" value="@Model.Image" />
+
+            <div class="update-user">
+                <img src="@Model.Image"  />
+                <div class="form-infor">
+                    <p>Họ tên</p>
+                    <input type="text" name="fullName" value="@Model.FullName" />
+                </div>
+                <div class="form-infor">
+                    <p>Email</p>
+                    <input type="email" name="email" readonly value="@Model.Email" />
+                </div>
+                <div class="form-infor">
+                    <p>Số điện thoại</p>
+                    <input type="text" name="phoneNumber" value="@Model.PhoneNumber" />
+                    @Html.ValidationMessageFor(m => m.PhoneNumber,"", new { @style = "color: red;"})
+                </div>
+                <div class="form-infor">
+                    <p>Địa chỉ</p>
+                    <input type="text" name="address" value="@Model.Address" />
+                    @Html.ValidationMessageFor(m => m.Address,"", new {  @style = "color: red;"})
+
+                </div>
+            </div>
+            <button type="submit">
+                <div class="btn-update-user">
+                    CẬP NHẬT
+                </div>
+            </button>
+        }
+        
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+    </script>
+    <script src="/client/js/main.js"></script>
+    <script src="/client/js/notify.js"></script>
+    <script src="/client/js/notify.min.js"></script>
+</body>
+</html>

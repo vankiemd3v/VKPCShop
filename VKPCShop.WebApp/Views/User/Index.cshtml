@@ -1,0 +1,127 @@
+﻿@{
+    Layout = null;
+    var user = ViewBag.User;
+    
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/client/css/themify-icons.css">
+    <link rel="stylesheet" href="/client/css/style.css">
+    <title>VKPCShop</title>
+</head>
+<body>
+    <header>
+        <div class="header-login">
+            <div class="user-img-left">
+                <img src="/client/images/user-img-left.png" alt="">
+            </div>
+            <div class="user-img-right">
+                <img src="/client/images/user-img-right.png" alt="">
+            </div>
+            @*<div class="btn-login">
+                <a type="button" href="/User/Login">
+                    <p>Xin chào @user.FullName!</p>
+                </a>
+            </div>*@
+            <div class="avatar-user">
+                <img src="@user.Image" />
+                <p>@user.FullName</p>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="content">
+            <a href="/User/Orders?id=@user.Id">
+                <div class="order-manage">
+                    <i class="ti-truck user-icon-left"></i>
+                    <p class="user-text-center">Quản lý đơn hàng</p>
+                    <i class="ti-angle-right user-icon-right"></i>
+                </div>
+            </a>
+            <a href="/User/Update?id=@user.Id&isBuy=notBuy">
+                <div class="order-manage">
+                    <i class="ti-user user-icon-left"></i>
+                    <p class="user-text-center">Thông tin người dùng</p>
+                    <i class="ti-angle-right user-icon-right"></i>
+                </div>
+            </a>
+            <a href="/User/Logout">
+                <div class="order-manage">
+                    <i class="ti-new-window user-icon-left"></i>
+                    <p class="user-text-center">Đăng xuất</p>
+                    <!-- <i class="ti-angle-right user-icon-right"></i> -->
+                </div>
+            </a>
+            
+        </div>
+    </main>
+    <!-- <div class="is-mobile-menu"></div> -->
+    <div class="mobile-menu">
+        <ul class="menu-item">
+            <li>
+                <a href="/Home">
+                    <span class="ti-home"></span>
+                    <p>TRANG CHỦ</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item">
+            <li>
+                <a href="/Category">
+                    <span class="ti-layout-grid2"></span>
+                    <p>DANH MỤC</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item ">
+            <li>
+                <a href="/Cart">
+                    <span class="ti-shopping-cart"></span>
+                    <p>GIỎ HÀNG (<span class="cartNumber" style="font-size:9px;">@ViewBag.CartNumber</span>)</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item">
+            <li>
+                <a href="/Cart/Build">
+                    <span class="ti-settings"></span>
+                    <p>BUILD PC</p>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu-item activeMenu">
+            <li>
+                <a href="/User">
+                    <span class="ti-user"></span>
+                    <p>TÀI KHOẢN</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+    </script>
+    <script src="/client/js/main.js"></script>
+    <script src="/client/js/notify.js"></script>
+    <script src="/client/js/notify.min.js"></script>
+    @if (ViewBag.Updated == "updateSuccess")
+    {
+        <script>
+            $.notify("Cập nhật tài khoản thành công", "success");
+        </script>
+    }
+    @if (ViewBag.Updated == "updateFaild")
+    {
+        <script>
+            $.notify("Cập nhật thất bại, có lỗi xảy ra", "error");
+        </script>
+    }
+</body>
+</html>

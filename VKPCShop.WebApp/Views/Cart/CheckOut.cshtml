@@ -1,0 +1,141 @@
+﻿@using VKPCShop.WebApp.ViewModel;
+@model List<CartVm>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int totalPayment = ViewBag.TotalPayment;
+    var user = ViewBag.User;
+}
+@section Scripts{
+    @if (ViewBag.Updated == "updateSuccess")
+    {
+        <script>
+            $.notify("Cập nhật tài khoản thành công", "success");
+        </script>
+    }
+}
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba( 255, 255, 255, .8 ) url('https://i.stack.imgur.com/FhHRx.gif') 50% 50% no-repeat;
+    }
+
+    body.loading {
+        overflow: hidden;
+    }
+
+        body.loading .modal {
+            display: block;
+        }
+</style>
+<header>
+    <div class="wrapper">
+    </div>
+    <div class="title-cart">
+        @if(ViewBag.isBuy != null)
+        {
+            <a href="/Cart"><i class="ti-arrow-left icon-back"></i></a>
+        }
+        @if (ViewBag.isBuild != null)
+        {
+            <a href="/Cart/Build"><i class="ti-arrow-left icon-back"></i></a>
+        }
+        <h5>Thanh toán</h5>
+        @*<a href="/Cart/DeleteAllCart"><i class="ti-trash" id="icon-delete-cart"></i></a>*@
+    </div>
+
+</header>
+<main>
+
+    <a href="/User/Update?id=@user.Id&isBuy=@ViewBag.isBuy&isBuild=@ViewBag.isBuild">
+        <div class="infor-order">
+            <h4>THÔNG TIN NHẬN HÀNG</h4>
+                <div class="box-infor">
+                    <div class="infor-order-div">
+                        <p><i class="ti-user" style="margin-right: 5px;"></i> @user.FullName</p>
+                        <p><i class="ti-headphone-alt" style="margin-right: 5px;"></i> @user.PhoneNumber</p>
+                        <p><i class="ti-email" style="margin-right: 5px;"></i> @user.Email</p>
+                        <p><i class="ti-truck" style="margin-right: 5px;"></i> @user.Address</p>
+                    </div>
+                    <div class="edit-infor"><i class="ti-angle-right"></i></div>
+                </div>
+        </div>
+    </a>
+
+    <a href="#">
+
+        <div class="method-payment">
+            <h4>PHƯƠNG THỨC THANH TOÁN</h4>
+                <div class="box-infor-payment">
+                    <div class="infor-order-div">
+                        <p> Thanh toán khi nhận hàng</p>
+                    </div>
+                    <i class="ti-angle-right"></i>
+                </div>
+        </div>
+    </a>
+
+    <div class="build-total-payment">
+        <h5>DANH SÁCH SẢN PHẨM</h5>
+        <p>Tổng tiền: <span>@totalPayment.ToString("N0")<sup>đ</sup></span></p>
+    </div>
+    <div class="list-cart">
+
+        @if (Model.Count > 0)
+        {
+            @foreach (var item in Model)
+            {
+                <div class="cart-item">
+                    <div class="cart-left">
+                        <img class="cart-item-image" src="/admin/images/@item.Image" alt="">
+                    </div>
+                    <div class="cart-right">
+                        <p class="cart-item-name">@item.Name</p>
+                        <p class="cart-item-brand">@item.BrandName</p>
+                        <p class="cart-item-inventory">Còn @item.Quantity sản phẩm</p>
+                        <div class="box-price-cart">
+                            @if (item.SalePrice > 0)
+                            {
+                                <p class="cart-item-price">@item.SalePrice.ToString("N0")<sup>đ</sup></p>
+                                <p class="cart-item-price-main">@item.Price.ToString("N0")<sup>đ</sup></p>
+                            }
+                            else
+                            {
+                                <p class="cart-item-price">@item.Price.ToString("N0")<sup>đ</sup></p>
+                                <p class="cart-item-price-main"></p>
+                            }
+                            <input class="input-quantity" type="text" value="Số lượng: @item.BuyQuantity" disabled>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div style="text-align: center; padding-top: 100px;">@ViewBag.NoCart</div>
+        }
+    </div>
+
+</main>
+<!-- <div class="is-mobile-menu"></div> -->
+<div class="modal"><!-- Place at bottom of page --></div>
+ @if (Model.Count > 0)
+{
+    @using (Html.BeginForm("CheckOut", "Cart", FormMethod.Post))
+    {
+        <input type="hidden" name="userId" value="@user.Id" />
+        <input type="hidden" name="isBuild" value="@ViewBag.isBuild" />
+        <div class="payment">
+            <span>@totalPayment.ToString("N0")<sup>đ</sup></span>
+            <button id="btn-payment" type="submit"><p>THANH TOÁN</p></button>
+        </div>
+    
+    }
+    
+
+}

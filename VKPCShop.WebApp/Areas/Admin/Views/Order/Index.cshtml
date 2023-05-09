@@ -1,0 +1,191 @@
+﻿@using VKPCShop.WebApp.Dtos;
+@model PagingResult<OrderDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts{
+    @if (ViewBag.Active == "deleteSuccess")
+    {
+        <script>
+            $.notify("Đã xóa đơn hàng", "success");
+        </script>
+    }
+    @if (ViewBag.Active == "deleteError")
+    {
+        <script>
+            $.notify("Xóa thất bại, có lỗi xảy ra", "error");
+        </script>
+    }
+}
+
+<style>
+    .input-addz {
+        width: 100%;
+        border: 1px solid silver;
+        font-size: 15px;
+        padding: 5px 0;
+    }
+
+    #border-pagination {
+        margin: 0 auto;
+        padding: 0;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+        #border-pagination li {
+            display: inline;
+        }
+
+            #border-pagination li a {
+                display: block;
+                text-decoration: none;
+                color: #000;
+                padding: 5px 10px;
+                border: 1px solid #ddd;
+                float: left;
+            }
+
+            #border-pagination li a {
+                -webkit-transition: background-color 0.4s;
+                transition: background-color 0.4s
+            }
+
+                #border-pagination li a.active {
+                    background-color: #4caf50;
+                    color: #fff;
+                }
+
+                #border-pagination li a:hover:not(.active) {
+                    background: #ddd;
+                }
+</style>
+
+<!-- BREADCRUMB-->
+<section class="au-breadcrumb m-t-75">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="au-breadcrumb-content">
+                        <div class="au-breadcrumb-left">
+                            <ul class="list-unstyled list-inline au-breadcrumb__list">
+                                <li class="list-inline-item active">
+                                    <a href="/Admin/Home">Trang chủ</a>
+                                </li>
+                                <li class="list-inline-item seprate">
+                                    <span>/</span>
+                                </li>
+                                <li class="list-inline-item">Đơn hàng</li>
+                            </ul>
+                        </div>
+                        <a href="/Admin/Product/Create" class="au-btn au-btn-icon au-btn--green">
+                            <i class="zmdi zmdi-plus"></i> THÊM SẢN PHẨM
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END BREADCRUMB-->
+<!-- STATISTIC-->
+<div class="section__content section__content--p30">
+    <div class="container-fluid">
+        <div class="row m-t-30">
+            <div class="col-md-12">
+                <!-- DATA TABLE-->
+                <div class="table-responsive m-b-40">
+                    <form asp-controller="Order" asp-action="Index" method="get" style="margin-left: 1rem;padding: 0.3rem 0.5rem;border-radius: 5px; font-size: 13px; float: right; background: white;">
+                        <input type="text" placeholder="Tìm kiếm..." name="keyword" />
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </form>
+
+                    <a href="/Admin/Order/Index" style="background: white; padding: 1px 0.5rem; border-radius: 5px; margin-top: 2px;color: #808080; float: right;"><i class="fa fa-refresh"></i></a>
+                    <table class="table table-borderless table-data3">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Khách hàng</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.ShipName</td>
+                                    <td>@item.ShipEmail</td>
+                                    <td>@item.ShipPhoneNumber</td>
+                                    <td>@item.TotalPayment.ToString("N0")<sup>đ</sup></td>
+                                    @if(item.Status == "Chờ duyệt")
+                                    {
+                                        <td><span class="status--denied">@item.Status</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span class="status--process">@item.Status</span></td>
+                                    }
+                                    <td>
+                                        <div class="table-data-feature">
+                                            <a href="/Admin/Order/Update?id=@item.Id">
+                                                <button class="item icon-edit-product" data-toggle="tooltip" data-placement="top" title="" data-original-title="Duyệt">
+                                                    <i class="zmdi zmdi-edit"></i>
+                                                </button>
+                                            </a>
+                                            <a href="/Admin/Order/Delete?id=@item.Id">
+                                                <button class="item btn-delete-product" data-toggle="tooltip" data-placement="top" title="" data-original-title="Xóa">
+                                                    <i class="zmdi zmdi-delete"></i>
+                                                </button>
+                                            </a>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (Model.PageCount > 1)
+                    {
+                        <ul id="border-pagination">
+                            @for (int i = 1; i <= Model.PageCount; i++)
+                            {
+                                if (Model.PageIndex == i)
+                                {
+
+                                    <li><a href="" class="active">@i</a></li>
+                                }
+                                else
+                                {
+                                    <li><a href="/Admin/Order?&pageIndex=@i&keyword=@ViewBag.Keyword">@i</a></li>
+                                }
+                            }
+                            @{
+                                int nextPage = 0;
+                                if (Model.PageIndex + 1 <= Model.PageCount)
+                                {
+                                    nextPage = Model.PageIndex + 1;
+                                }
+                                else
+                                {
+                                    nextPage = Model.PageIndex;
+                                }
+                            }
+                            <li><a href="/Admin/Order?&pageIndex=@nextPage&keyword=@ViewBag.Keyword">&raquo;</a></li>
+                        </ul>
+                    }
+
+                </div>
+                <!-- END DATA TABLE-->
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END STATISTIC-->

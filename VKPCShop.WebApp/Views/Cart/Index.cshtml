@@ -1,0 +1,126 @@
+﻿@using VKPCShop.WebApp.ViewModel;
+@model List<CartVm>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int totalPayment = ViewBag.TotalPayment;
+}
+@section Scripts{
+    @if(ViewBag.DeleteAll == "deleteAll")
+    {
+        <script>
+            $.notify("Đã xóa hết giỏ hàng", {
+                position: "top left",
+                className: "error"
+            });
+        </script>
+    }
+}
+
+<header>
+    <div class="wrapper">
+    </div>
+    <div class="title-cart">
+        <a href="/Home"><i class="ti-arrow-left icon-back"></i></a>
+        <h5>GIỎ HÀNG</h5>
+        <a href="/Cart/DeleteAllCart" id="icon-delete-cart"><i class="ti-trash"></i></a>
+    </div>
+
+</header>
+<main>
+    <div class="build-total-payment">
+        <h5>DANH SÁCH SẢN PHẨM</h5>
+        <p>Tổng tiền: <span>@totalPayment.ToString("N0")<sup>đ</sup></span></p>
+    </div>
+    <div class="list-cart">
+        
+        @if(Model.Count > 0)
+        {
+            @foreach (var item in Model)
+            {
+                <div class="cart-item">
+                    <div class="cart-left">
+                        <img class="cart-item-image" src="/admin/images/@item.Image" alt="">
+                    </div>
+                    <div class="cart-right">
+                        <p class="cart-item-name">@item.Name</p>
+                        <p class="cart-item-brand">@item.BrandName</p>
+                        <p class="cart-item-inventory">Còn @item.Quantity sản phẩm</p>
+                        <div class="box-price-cart">
+                            @if (item.SalePrice > 0)
+                            {
+                                <p class="cart-item-price">@item.SalePrice.ToString("N0")<sup>đ</sup></p>
+                                <p class="cart-item-price-main">@item.Price.ToString("N0")<sup>đ</sup></p>
+                            }
+                            else
+                            {
+                                <p class="cart-item-price">@item.Price.ToString("N0")<sup>đ</sup></p>
+                                <p class="cart-item-price-main"></p>
+                            }
+                            <div class="box-input-quantity">
+                                <a type="button" href="/Cart/Update?id=@item.Id&active=minus" class="btn-minus"><i class="ti-minus"></i></a>
+                                <input class="input-quantity" type="number" value="@item.BuyQuantity" disabled>
+                                <a type="button" href="/Cart/Update?id=@item.Id&active=plus" class="btn-minus"><i class="ti-plus"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }else{
+            <div style="text-align: center; padding-top: 100px;">@ViewBag.NoCart</div>
+        }
+    </div>
+
+</main>
+<!-- <div class="is-mobile-menu"></div> -->
+@if (Model.Count > 0)
+{
+    <a href="/Cart/CheckOut">
+        <div class="order">
+            MUA NGAY
+        </div>
+    </a>
+
+}
+
+<div class="mobile-menu">
+    <ul class="menu-item">
+        <li>
+            <a href="/Home">
+                <span class="ti-home"></span>
+                <p>TRANG CHỦ</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Category">
+                <span class="ti-layout-grid2"></span>
+                <p>DANH MỤC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item activeMenu">
+        <li>
+            <a href="/Cart">
+                <span class="ti-shopping-cart"></span>
+                <p>GIỎ HÀNG (<span class="cartNumber" style="font-size:9px;">@ViewBag.CartNumber</span>)</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Cart/Build">
+                <span class="ti-settings"></span>
+                <p>BUILD PC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/User">
+                <span class="ti-user"></span>
+                <p>TÀI KHOẢN</p>
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,160 @@
+﻿@using VKPCShop.WebApp.Dtos;
+@model ProductDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .detail-outStock {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgb(195, 20, 20);
+        color: #fff;
+        font-weight: 900;
+        text-align: center;
+        padding: 0.8rem 0;
+    }
+
+    .btn-outStock {
+        padding: 0.5rem 0;
+        text-align: center;
+        background-color: rgb(255, 255, 255);
+        border: 1px solid rgb(195, 20, 20);
+        border-radius: 5px;
+        text-decoration: none;
+        color: rgb(195, 20, 20);
+        font-size: 12px;
+        font-weight: 900;
+        display: block;
+    }
+
+    .btn-outStock a {
+        text-decoration: none;
+        color: rgb(20, 53, 195);
+        font-size: 12px;
+    }
+</style>
+<header>
+    <div class="header-position-fixed">
+        <div class="box-search-fixed">
+            <a href="/Home" class="icon-back-category"><i class="ti-arrow-left"></i></a>
+            <div class="search-fixed">
+                @using (Html.BeginForm("Index", "Product", FormMethod.Post))
+                {
+                    <i class="ti-search" type="submit"></i>
+                    <input class="inputSearch-fixed" type="text" name="keyword" value="@ViewBag.Keyword" placeholder="Nhập tên sản phẩm..." />
+                }
+            </div>
+            <a href="/Cart" class="icon-cart-category"><i class="ti-shopping-cart"></i><span class="cartNumber">@ViewBag.CartNumber</span></a>
+        </div>
+    </div>
+
+</header>
+<main style="background: #f6f6f6; padding-bottom: 5rem;">
+    <div class="product-detail">
+        <div class="list-img">
+            <img src="/admin/images/@Model.Image" alt="">
+            
+            @foreach (var image in ViewBag.Images)
+            {
+                <img src="/admin/images/@image.Name" alt="">
+
+            }
+        </div>
+        <div class="infor">
+            <h2 class="name-detail">@Model.Name</h2>
+            <div class="brand-detail">
+                Thương hiệu: @ViewBag.Brand
+            </div>
+            <div class="inventory-detail">Chỉ còn @Model.Quantity sản phẩm</div>
+            <div class="box-price-detail">
+                @if(Model.SalePrice > 0)
+                {
+                    <div class="price-detail">@Model.SalePrice.ToString("N0")<sup>₫</sup></div>
+                    <div class="main-price-detail">@Model.Price.ToString("N0")<sup>₫</sup></div>
+                }
+                else
+                {
+                    <div class="price-detail">@Model.Price.ToString("N0")<sup>₫</sup></div>
+
+                }
+            </div>
+            <div class="config">
+                @Html.Raw(Model.Config)
+            </div>
+        </div>
+    </div>
+    <div class="usally-sell">
+        <div class="box-product-name">
+            <h5 class="title-usally-sell">SẢN PHẨM CÙNG THƯƠNG HIỆU</h3>
+        </div>
+        <div class="box-detail-content">
+            @foreach(var item in ViewBag.ProductsByBrand)
+            {
+                <a href="/Product/Detail?id=@item.Id">
+                    <div class="product-base">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <p class="product-item-brand">@item.BrandName</p>
+                        <p class="product-item-name">@item.Name</p>
+                        <div class="box-price">
+                            @if(item.SalePrice > 0)
+                            {
+                                <span class="product-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                                <p class="product-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                            }
+                            else
+                            {
+                                <span class="product-item-price">@item.Price.ToString("N0")<sup>₫</sup></span>
+                            }
+                        </div>
+                        @if(item.Quantity > 0)
+                        {
+                            <a href="#" class="btn-add-cart-flex" id="@item.Id">
+                                Thêm vào giỏ
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="btn-outStock">
+                                Hết hàng
+                            </a>
+                        }
+                    </div>
+                </a>
+            }
+            
+        </div>
+    </div>
+    <div class="sales-policy">
+        <h5>CHÍNH SÁCH BÁN HÀNG</h5>
+        <div class="sales-policy-item">
+            <i class="ti-truck"></i> <p style="margin-left: 7%;">Miễn phí giao hàng cho đơn hàng từ 5 triệu</p>
+            <i class="ti-check-box"></i><p style="margin-left: 7%;">Cam kết chính hãng 100% </p>
+            <i class="ti-reload"></i> <p style="margin-left: 7%;">Đổi trả trong vòng 10 ngày</p>
+        </div>
+    </div>
+    <div class="sales-policy" style="padding-bottom: 4rem;">
+        <h5>MÔ TẢ SẢN PHẨM</h5>
+        <div class="sales-policy-item">
+            @Html.Raw(Model.Description)
+        </div>
+    </div>
+</main>
+<!-- <div class="is-mobile-menu"></div> -->
+@if(Model.Quantity > 0)
+{
+    <a href="#">
+        <div class="detail-add-cart" id="@Model.Id">
+            THÊM VÀO GIỎ
+        </div>
+    </a>
+}
+else
+{
+    <a href="#">
+        <div class="detail-outStock">
+            HẾT HÀNG
+        </div>
+    </a>
+}

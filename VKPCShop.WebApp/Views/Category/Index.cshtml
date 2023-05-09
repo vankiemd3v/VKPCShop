@@ -1,0 +1,82 @@
+﻿@using VKPCShop.WebApp.Dtos;
+@model List<CategoryDto>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<header>
+    <div class="header-position-fixed">
+        <div class="box-search-fixed">
+            <a href="/Home" class="icon-back-category"><i class="ti-arrow-left"></i></a>
+            <div class="search-fixed">
+                @using (Html.BeginForm("Index", "Product", FormMethod.Post))
+                {
+                    <i class="ti-search" type="submit"></i>
+                    <input class="inputSearch-fixed" type="text" name="keyword" value="@ViewBag.Keyword" placeholder="Nhập tên sản phẩm..." />
+                }
+            </div>
+            <a href="/Cart" class="icon-cart-category"><i class="ti-shopping-cart"></i><span class="cartNumber">@ViewBag.CartNumber</span></a>
+        </div>
+    </div>
+    <div class="title-categories">
+        <h5>DANH MỤC SẢN PHẨM</h3>
+    </div>
+    <div class="menu-home">
+        <ul>
+            @foreach(var item in Model)
+            {
+                <li>
+                    <a href="/Product?categoryId=@item.Id">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <h5>@item.Name</h5>
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</header>
+<main>
+</main>
+<!-- <div class="is-mobile-menu"></div> -->
+<div class="mobile-menu">
+    <ul class="menu-item">
+        <li>
+            <a href="/Home">
+                <span class="ti-home"></span>
+                <p>TRANG CHỦ</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item activeMenu">
+        <li>
+            <a href="/Category">
+                <span class="ti-layout-grid2"></span>
+                <p>DANH MỤC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Cart">
+                <span class="ti-shopping-cart"></span>
+                <p>GIỎ HÀNG (<span class="cartNumber" style="font-size:9px;">@ViewBag.CartNumber</span>)</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Cart/Build">
+                <span class="ti-settings"></span>
+                <p>BUILD PC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/User">
+                <span class="ti-user"></span>
+                <p>TÀI KHOẢN</p>
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,345 @@
+﻿@using VKPCShop.WebApp.ViewModel;
+@model List<ProductVm>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Scripts{
+    <script src="/client/js/slide.js"></script>
+}
+<style>
+    .btn-outStock {
+        padding: 0.5rem 0;
+        text-align: center;
+        background-color: rgb(255, 255, 255);
+        border: 1px solid rgb(195, 20, 20);
+        border-radius: 5px;
+        text-decoration: none;
+        color: rgb(195, 20, 20);
+        font-size: 12px;
+        font-weight: 900;
+        display: block;
+    }
+
+        .btn-outStock a {
+            text-decoration: none;
+            color: rgb(20, 53, 195);
+            font-size: 12px;
+        }
+</style>
+<header>
+    <div class="header-position-fixed">
+        <div class="box-search-fixed">
+            <a href="/Home" class="icon-home"><i class="ti-home"></i></a>
+            <div class="search-fixed">
+                @using (Html.BeginForm("Index", "Product", FormMethod.Post))
+                {
+                    <i class="ti-search" type="submit"></i>
+                    <input class="inputSearch-fixed" type="text" name="keyword" value="@ViewBag.Keyword" placeholder="Nhập tên sản phẩm..." />
+                }
+            </div>
+            <a href="/Cart" class="icon-cart-category"><i class="ti-shopping-cart"></i><span class="cartNumber">@ViewBag.CartNumber</span></a>
+        </div>
+    </div>
+    <div class="logo-name-vk">
+        <i class="ti-twitter"></i>
+
+        VK Gaming
+        <i class="ti-twitter"></i>
+
+
+    </div>
+    <div class="slideshow-container">
+        <div class="mySlides fade">
+            <img src="/client/images/banner.png" class="img-banner">
+        </div>
+
+        <div class="mySlides fade">
+            <img src="/client/images/banner2.png" class="img-banner">
+        </div>
+
+        <div class="mySlides fade">
+            <img src="/client/images/banner3.png" class="img-banner">
+        </div>
+        <div style="text-align:center;">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+    <div class="menu-home">
+        <ul>
+            
+            <li>
+                <a href="/Product?categoryId=@ViewBag.DisplayPC.Id">
+                    <img src="/admin/images/@ViewBag.DisplayPC.Image" alt="">
+                    <h5>@ViewBag.DisplayPC.Name</h5>
+                </a>
+            </li>
+            @foreach (var item in ViewBag.ParentCategory)
+            {
+                <li>
+                    <a href="/Product?categoryId=@item.Id">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <h5>@item.Name</h5>
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+
+</header>
+<main>
+    <div class="box-product">
+        <div class="sales-name">
+            <h3>KHUYẾN MÃI</h3>
+            <a href="/Product/Index?sale=true" class="view-all">Xem tất cả <i class="ti-angle-double-right"></i></a>
+        </div>
+        <div class="box-product-content">
+            @foreach(var item in ViewBag.Sale)
+            {
+                <a href="/Product/Detail?id=@item.Id">
+                    <div class="product-item">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <p class="product-item-brand">@item.BrandName</p>
+                        <p class="product-item-name">@item.Name</p>
+                        <div class="box-price">
+                            <span class="product-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                            <p class="product-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                        </div>
+                    </div>
+                </a>
+            }
+            
+        </div>
+    </div>
+    <div class="box-product">
+        <div class="sales-name">
+            <h3>PC Gaming, Văn phòng</h3>
+            <a href="/Product/Index?categoryId=@ViewBag.PcId" class="view-all">Xem tất cả <i class="ti-angle-double-right"></i></a>
+        </div>
+        <div class="box-product-content">
+            @foreach (var item in ViewBag.PC)
+            {
+                <a href="/Product/Detail?id=@item.Id">
+                    <div class="product-item">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <p class="product-item-brand">@item.BrandName</p>
+                        <p class="product-item-name">@item.Name</p>
+                        <div class="box-price">
+                            @if (item.SalePrice != 0)
+                            {
+                                <span class="product-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                                <p class="product-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                            }
+                            else
+                            {
+                                <span class="product-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                            }
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+    <div class="best-sell">
+        <div class="box-product-name">
+            <h4 class="home-title">Bán chạy trong tháng</h4>
+            <a href="/Product?bestSell=true">Xem tất cả </a>
+        </div>
+        <div class="box-product-content">
+            @foreach (var item in ViewBag.Sale)
+            {
+                <a href="/Product/Detail?id=@item.Id">
+                    <div class="product-item">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <p class="product-item-brand">@item.BrandName</p>
+                        <p class="product-item-name">@item.Name</p>
+                        <div class="box-price">
+                            @if (item.SalePrice > 0)
+                            {
+                                <span class="product-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                                <p class="product-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                            }
+                            else
+                            {
+                                <span class="product-item-price">@item.Sale.ToString("N0")<sup>₫</sup></span>
+                            }
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+    <div class="out-brands-hot">
+        <div class="box-product-name">
+            <h4 class="home-title">Thương hiệu hàng đầu</h3>
+        </div>
+        <div class="box-brand-hot">
+            @foreach(var item in ViewBag.BrandHot)
+            {
+                <div class="brand-hot">
+                    <img src="/admin/images/@item.Image" alt="">
+                </div>
+            }
+            @*<div class="brand-hot">
+                <img src="/client/images/asus.png" alt="">
+            </div>
+            <div class="brand-hot">
+                <img src="/client/images/lenovo.png" alt="">
+            </div>
+            <div class="brand-hot">
+                <img src="/client/images/microsoft.png" alt="">
+            </div>*@
+        </div>
+    </div>
+    <div class="for-you-box">
+        <div class="box-product-name">
+            <h4 class="title-for-you">
+                Dành riêng cho bạn</h3>
+                <div class="grid-view">
+                    <ul>
+                        <li>
+                            <a class="active2" href="#allProduct">Tất cả</a>
+                        </li>
+                        @foreach (var item in ViewBag.CategoryName)
+                        {
+                            <li>
+                                <a href="#category_@item.Id">@item.Name</a>
+                            </li>
+                        }
+                        @*<li>
+                            <a href="#pcDongBo">PC đồng bộ</a>
+                        </li>
+                        <li>
+                            <a href="#manHinh">Màn hình máy tính</a>
+                        </li>
+                        <li>
+                            <a href="#linhKien">Linh kiện điện tử</a>
+                        </li>
+                        <li>
+                            <a href="#phuKien">Phụ kiện Gaming</a>
+                        </li>*@
+
+                    </ul>
+                </div>
+        </div>
+        <div class="for-you hiddenProduct active1" id="allProduct">
+            @foreach(var item in Model)
+            {
+                <a href="/Product/Detail?id=@item.Id">
+                    <div class="for-you-item">
+                        <img src="/admin/images/@item.Image" alt="">
+                        <p class="product-item-brand">@item.BrandName</p>
+                        <p class="for-you-name">@item.Name</p>
+                        <div class="for-you-price">
+                            @if(item.SalePrice > 0)
+                            {
+                                <span class="for-you-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                                <p class="for-you-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                            }
+                            else
+                            {
+                                <span class="for-you-item-price">@item.Price.ToString("N0")<sup>₫</sup></span>
+                            }
+                        </div>
+                        @if (item.Quantity > 0)
+                        {
+                            <a href="#" class="btn-add-cart-flex" id="@item.Id">
+                                Thêm vào giỏ
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="btn-outStock">
+                                Hết hàng
+                            </a>
+                        }
+                    </div>
+                </a>
+             }
+        </div>
+        @foreach (var category in ViewBag.CategoryName)
+        {
+            <div class="for-you hiddenProduct" id="category_@category.Id">
+                @foreach (var item in Model)
+                {
+                    @if (item.CategoryId == category.Id || item.ParentCategoryId == category.Id)
+                    {
+                        <a href="/Product/Detail?id=@item.Id">
+                            <div class="for-you-item">
+                                <img src="/admin/images/@item.Image" alt="">
+                                <p class="product-item-brand">@item.BrandName</p>
+                                <p class="for-you-name">@item.Name</p>
+                                <div class="for-you-price">
+                                    @if (item.SalePrice != 0)
+                                    {
+                                        <span class="for-you-item-price">@item.SalePrice.ToString("N0")<sup>₫</sup></span>
+                                        <p class="for-you-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                                    }
+                                    else
+                                    {
+                                        <span class="for-you-item-price">@item.Price.ToString("N0")<sup>₫</sup></span>
+                                    }
+                                </div>
+                                @if (item.Quantity > 0)
+                                {
+                                    <a href="#" class="btn-add-cart-flex" id="@item.Id">
+                                        Thêm vào giỏ
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="btn-outStock">
+                                        Hết hàng
+                                    </a>
+                                }
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+        }
+</main>
+<!-- <div class="is-mobile-menu"></div> -->
+<div class="mobile-menu">
+    <ul class="menu-item activeMenu">
+        <li>
+            <a href="/Home">
+                <span class="ti-home"></span>
+                <p>TRANG CHỦ</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Category">
+                <span class="ti-layout-grid2"></span>
+                <p>DANH MỤC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Cart">
+                <span class="ti-shopping-cart"></span>
+                <p>GIỎ HÀNG (<span class="cartNumber" style="font-size:9px;">@ViewBag.CartNumber</span>)</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Cart/Build">
+                <span class="ti-settings"></span>
+                <p>BUILD PC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/User">
+                <span class="ti-user"></span>
+                <p>TÀI KHOẢN</p>
+            </a>
+        </li>
+    </ul>
+</div>

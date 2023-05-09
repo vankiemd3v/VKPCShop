@@ -1,0 +1,229 @@
+﻿@using VKPCShop.WebApp.Dtos;
+@model List<CategoryDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var created = ViewBag.Notify;
+}
+
+@if (created == "success")
+{
+    @section Notify{
+    <script>
+        $(document).ready(function () {
+            $.notify("Thành công!", "success");
+        });
+    </script>
+    }
+}
+@if (created == "fail")
+{
+    @section Notify{
+    <script>
+        $(document).ready(function () {
+            $.notify("Thất bại! Bạn phải nhập tên và chọn ảnh", "error");
+        });
+    </script>
+    }
+}
+
+<!-- BREADCRUMB-->
+<section class="au-breadcrumb m-t-75">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="au-breadcrumb-content">
+                        <div class="au-breadcrumb-left">
+                            <ul class="list-unstyled list-inline au-breadcrumb__list">
+                                <li class="list-inline-item active">
+                                    <a href="/Admin/Home">Trang chủ</a>
+                                </li>
+                                <li class="list-inline-item seprate">
+                                    <span>/</span>
+                                </li>
+                                <li class="list-inline-item">Danh mục</li>
+                            </ul>
+                        </div>
+                        <button data-toggle="modal" data-target="#largeModal" class="au-btn au-btn-icon au-btn--green">
+                            <i class="zmdi zmdi-plus"></i> THÊM DANH MỤC
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END BREADCRUMB-->
+<!-- STATISTIC-->
+<div class="section__content section__content--p30">
+    <div class="container-fluid">
+        <div class="row m-t-30">
+            <div class="col-md-12">
+                <!-- DATA TABLE-->
+                <div class="table-responsive m-b-40">
+                    <form asp-controller="Category" asp-action="Index" method="get" style="margin-left: 1rem;padding: 0.3rem 0.5rem;border-radius: 5px; font-size: 13px; float: right; background: white;">
+                        <input type="text" placeholder="Tìm kiếm..." name="keyword" />
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </form>
+
+                    <a href="/Admin/Category/Index" style="background: white; padding: 1px 0.5rem; border-radius: 5px; margin-top: 2px;color: #808080; float: right;"><i class="fa fa-refresh"></i></a>
+                    <table class="table table-borderless table-data3">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Tên Danh mục</th>
+                                <th>Danh mục cha</th>
+                                <th>Ảnh</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.Name</td>
+                                    <td>
+                                        @foreach(var j in Model)
+                                        {
+                                            if(item.ParentCategoryId == j.Id)
+                                            {
+                                                @j.Name
+                                            }
+                                        }
+                                    </td>
+
+                                    <td style="width: 100px; height: 50px;">
+                                        <img src="/admin/images/@item.Image" style="width: 70%" />
+                                    </td>
+                                    <td>
+                                        <div class="table-data-feature">
+                                            <button id="@item.Id" data-toggle="modal" data-target="#largeModalUpdate" class="item icon-edit-category" data-placement="top" title="" data-original-title="Sửa">
+                                                <a href="#"><i class="zmdi zmdi-edit"></i></a>
+                                            </button>
+                                            <button id="@item.Id" class="item btn-delete-category" data-toggle="tooltip" data-placement="top" title="" data-original-title="Xóa">
+                                                <i class="zmdi zmdi-delete"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <!-- END DATA TABLE-->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END STATISTIC-->
+
+<!-- modal thêm danh mục -->
+<div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="largeModalLabel">Thêm Danh mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("Create", "Category", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                <div class="modal-body">
+                    <div class="row form-group">
+                        <div class="col cold-md-3">Danh mục cha</div>
+                        <div class="col col-md-9">
+                            <select asp-for="ParentCategoryId" name="ParentCategoryId" class="form-control">
+                                <option value="0">---Chọn---</option>
+                                @foreach (var item in Model)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col cold-md-3">Tên danh mục</div>
+                        <div class="col col-md-9">
+                            <input type="text" name="name" id="category-name-create" style="width: 100%; border: 1px solid silver; font-size: 15px; padding: 5px 1rem;" />
+                            <span class="text-danger valid-name"></span>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="file-input" class=" form-control-label">Chọn ảnh</label>
+                        </div>
+                        <div class="col col-md-9">
+                            <input type="file" id="file-input" name="formFile" class="form-control-file">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<!-- end modal thêm danh mục -->
+<!-- modal large -->
+<div class="modal fade" id="largeModalUpdate" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="largeModalLabel">Cập nhật Danh mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("Update", "Category", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                <div class="modal-body">
+                    <div class="row form-group">
+                        <input type="hidden" id="id-category" name="id" />
+                        <div class="col cold-md-3">Danh mục cha</div>
+                        <div class="col col-md-9">
+                            <select asp-for="ParentCategoryId" name="ParentCategoryId" class="form-control">
+                                <option value="0">---Chọn---</option>
+                                @foreach (var item in Model)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col cold-md-3">Tên danh mục</div>
+                        <div class="col col-md-9">
+                            <input type="text" name="name" id="category-name-update" style="width: 100%; border: 1px solid silver; font-size: 15px; padding: 5px 0;" />
+                            <span class="text-danger valid-name"></span>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="file-input" class=" form-control-label">Chọn ảnh</label>
+                        </div>
+                        <div class="col col-md-9">
+                            <input type="file" id="file-input" name="formFile" class="form-control-file">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <img id="img-update-category" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<!-- end modal large -->

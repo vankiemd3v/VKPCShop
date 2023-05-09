@@ -1,0 +1,142 @@
+﻿@using VKPCShop.WebApp.Dtos;
+
+@model List<OrderDto>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var products = ViewBag.ProductsInOrder;
+    var result = ViewBag.Result;
+}
+@section Scripts{
+    @if (result == "success")
+    {
+        <script>
+            $.notify("Đặt hàng thành công, kiểm tra email", {
+                position: "top left",
+                className: "success"
+            });
+        </script>
+    }
+    @if (result == "error")
+    {
+        <script>
+            $.notify("Đặt hàng thất bại, sản phẩm vừa hết hàng", {
+                position: "top left",
+                className: "error"
+            });
+        </script>
+    }
+}
+<header>
+    <div class="wrapper">
+    </div>
+    <div class="title-cart">
+        <a href="/User"><i class="ti-arrow-left icon-back"></i></a>
+        <h5>Quản lý đơn hàng</h5>
+        @*<a href="/Cart/DeleteAllCart"><i class="ti-trash" id="icon-delete-cart"></i></a>*@
+    </div>
+
+</header>
+<main>
+    <div class="build-total-payment">
+        <h5>DANH SÁCH ĐƠN HÀNG</h5>
+    </div>
+    <div class="list-order">
+        @foreach(var item in Model)
+        {
+            <a href="/User/OrderDetail?id=@item.Id">
+                <div class="box-item-orders">
+                    <div class="item-orders-title">
+                        <h5>Mã đơn hàng: #@item.Id</h5>
+                        @if(item.Status != "Hủy")
+                        {
+                            <p>@item.Status</p>
+                        }
+                        else
+                        {
+                            <p style="color:red;">@item.Status</p>
+                        }
+                    </div>
+                    <div>
+                        <p style="padding: 2px 0; font-size:13px">Ngày đặt hàng: @item.CreatedDate</p>
+                        <p style="padding: 2px 0; font-size:13px">Tổng tiền: <span style="font-weight: 700;">@item.TotalPayment.ToString("N0")<sup>₫</sup></span></p>
+                        <p style="padding: 2px 0; font-size:13px">Số sản phẩm: @item.OrderDetails.Count()</p>
+                        @foreach(var product in products)
+                        {
+                            if(product.OrderId == item.Id)
+                            {
+                                <div class="cart-item">
+                                    <div class="cart-left">
+                                        <img class="cart-item-image" src="/admin/images/@product.Image" alt="">
+                                    </div>
+                                    <div class="cart-right">
+                                        <p class="cart-item-name">@product.Name</p>
+                                        <p class="cart-item-brand">@product.BrandName</p>
+                                        <div class="box-price-cart">
+                                            @if(product.SalePrice > 0)
+                                            {
+                                                <p class="cart-item-price">@product.SalePrice.ToString("N0")<sup>₫</sup></p>
+                                                <p class="cart-item-price-main">@product.Price.ToString("N0")<sup>₫</sup></p>
+                                            }
+                                            else
+                                            {
+                                                <p class="cart-item-price">@product.Price.ToString("N0")<sup>₫</sup></p>
+                                                <p class="cart-item-price-main"></p>
+                                            }
+                                            <p class="detail-order">
+                                                Xem thêm <i class="ti-angle-right"></i>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                break;
+                            }
+                        }
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+
+</main>
+<div class="mobile-menu">
+    <ul class="menu-item">
+        <li>
+            <a href="/Home">
+                <span class="ti-home"></span>
+                <p>TRANG CHỦ</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Category">
+                <span class="ti-layout-grid2"></span>
+                <p>DANH MỤC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item ">
+        <li>
+            <a href="/Cart">
+                <span class="ti-shopping-cart"></span>
+                <p>GIỎ HÀNG (<span class="cartNumber" style="font-size:9px;">@ViewBag.CartNumber</span>)</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Cart/Build">
+                <span class="ti-settings"></span>
+                <p>BUILD PC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/User">
+                <span class="ti-user"></span>
+                <p>TÀI KHOẢN</p>
+            </a>
+        </li>
+    </ul>
+</div>

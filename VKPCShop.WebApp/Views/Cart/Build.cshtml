@@ -1,0 +1,256 @@
+﻿@using VKPCShop.WebApp.Dtos;
+@using VKPCShop.WebApp.ViewModel;
+@model List<CategoryDto>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int count = 1;
+    var IdUnSelected = new List<CategoryDto>();
+    foreach (var item in Model)
+    {
+        IdUnSelected.Add(item);
+    }
+    int totalPayment = ViewBag.TotalPayment;
+}
+@section Scripts{
+    @if(ViewBag.ReBuild == "rebuild")
+    {
+        <script>
+            $.notify("Build lại", {
+                position: "top left",
+                className: "info"
+            });
+        </script>
+    }
+}
+<header>
+
+    <div class="title-cart">
+        <a href="/Home"><i class="ti-arrow-left icon-back"></i></a>
+        <h5>XÂY DỰNG CẤU HÌNH</h5>
+        <a href="/Cart/DeleteAllBuild"><i class="ti-reload" id="icon-reload"></i></a>
+    </div>
+
+</header>
+<main>
+    <div class="build-total-payment">
+        <p>Tổng tiền: <span>@totalPayment.ToString("N0")<sup>đ</sup></span></p>
+    </div>
+    <div class="list-cart">
+        
+        @if (ViewBag.ProductsSelected != null)
+        {
+                // sp chưa đã đc chọn
+                @foreach (var item in Model)
+                {
+                    @foreach (var productSelected in ViewBag.ProductsSelected)
+                    {
+                        if (productSelected.CategoryId == item.Id)           // sp đã đc chọn
+                    {
+                        IdUnSelected.Remove(item);
+                        <div class="build-item">
+                            <div class="build-item-name">
+                                <h4>@(count++). @item.Name</h4>
+                                <div class="update-build-item">
+                                    @*<a href="#"><i class="ti-pencil-alt"></i></a>*@
+                                    <a href="/Cart/DeleteBuild?id=@item.Id"><i class="ti-trash"></i></a>
+                                    @*<a href="#categoryId_@item.Id" rel="modal:open" class="btn-add-build"><i class="ti-plus"></i></a>*@
+                                </div>
+                            </div>
+                            <div class="build-item-content">
+                                <div class="cart-item">
+                                    <div class="cart-left">
+                                        <img class="cart-item-image" src="/admin/images/@productSelected.Image" alt="">
+                                    </div>
+                                    <div class="cart-right">
+                                        <p class="cart-item-name">@productSelected.Name</p>
+                                        <p class="cart-item-brand">@productSelected.BrandName</p>
+                                        <p class="cart-item-inventory">Còn @productSelected.Quantity sản phẩm</p>
+                                        <div class="box-price-cart">
+                                            @if (productSelected.SalePrice > 0)
+                                            {
+                                                <p class="cart-item-price">@productSelected.SalePrice.ToString("N0")<sup>đ</sup></p>
+                                                <p class="cart-item-price-main">@productSelected.Price.ToString("N0")<sup>₫</sup></p>
+                                            }
+                                            else
+                                            {
+                                                <p class="cart-item-price">@productSelected.Price.ToString("N0")<sup>đ</sup></p>
+                                                <p class="cart-item-price-main"></p>
+                                            }
+                                            <div class="box-input-quantity">
+                                                <a type="button" href="/Cart/UpdateBuild?id=@productSelected.Id&active=minus" class="btn-minus"><i class="ti-minus"></i></a>
+                                                <input class="input-quantity" type="number" value="@productSelected.BuyQuantity" disabled>
+                                                <a type="button" href="/Cart/UpdateBuild?id=@productSelected.Id&active=plus" class="btn-minus"><i class="ti-plus"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                }
+                // sp chưa đc chọn
+                @foreach (var productUnselected in IdUnSelected)
+                {
+                    <div class="build-item">
+                        <div class="build-item-name">
+                            <h4>@(count++). @productUnselected.Name</h4>
+                            <div class="update-build-item">
+                                <!-- <a href="#"><i class="ti-pencil-alt"></i></a>
+                                <a href="#"><i class="ti-trash"></i></a> -->
+                                <a href="#categoryId_@productUnselected.Id" rel="modal:open" class="btn-add-build"><i class="ti-plus"></i></a>
+                            </div>
+                        </div>
+                        <!-- <div class="build-item-content">
+                            <div class="cart-item">
+                                <div class="cart-left">
+                                    <img class="cart-item-image" src="images/main.png" alt="">
+                                </div>
+                                <div class="cart-right">
+                                    <p class="cart-item-name">CPU INTEL Core i3-10105 (4C/8T, 3.7GHz - 4.4GHz, 6MB) - 1200</p>
+                                    <p class="cart-item-brand">INTEL</p>
+                                    <p class="cart-item-inventory">Chỉ còn 3 sản phẩm</p>
+                                    <div class="box-price-cart">
+                                        <p class="cart-item-price">1.990.000<sup>đ</sup></p>
+                                        <p class="cart-item-price-main">2.490.000₫</p>
+                                        <div class="box-input-quantity">
+                                            <a type="button" href="#" class="btn-minus"><i class="ti-minus"></i></a>
+                                            <input class="input-quantity" type="number" value="1" disabled>
+                                            <a type="button" href="#" class="btn-minus"><i class="ti-plus"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+            }
+        }
+        else
+        {
+            @foreach(var item in Model)
+            {
+                <div class="build-item">
+                    <div class="build-item-name">
+                        <h4>@(count++). @item.Name</h4>
+                        <div class="update-build-item">
+                            <!-- <a href="#"><i class="ti-pencil-alt"></i></a>
+                            <a href="#"><i class="ti-trash"></i></a> -->
+                            <a href="#categoryId_@item.Id" rel="modal:open" class="btn-add-build"><i class="ti-plus"></i></a>
+                        </div>
+                    </div>
+                    <!-- <div class="build-item-content">
+                        <div class="cart-item">
+                            <div class="cart-left">
+                                <img class="cart-item-image" src="images/main.png" alt="">
+                            </div>
+                            <div class="cart-right">
+                                <p class="cart-item-name">CPU INTEL Core i3-10105 (4C/8T, 3.7GHz - 4.4GHz, 6MB) - 1200</p>
+                                <p class="cart-item-brand">INTEL</p>
+                                <p class="cart-item-inventory">Chỉ còn 3 sản phẩm</p>
+                                <div class="box-price-cart">
+                                    <p class="cart-item-price">1.990.000<sup>đ</sup></p>
+                                    <p class="cart-item-price-main">2.490.000₫</p>
+                                    <div class="box-input-quantity">
+                                        <a type="button" href="#" class="btn-minus"><i class="ti-minus"></i></a>
+                                        <input class="input-quantity" type="number" value="1" disabled>
+                                        <a type="button" href="#" class="btn-minus"><i class="ti-plus"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            }
+            }
+        @foreach(var category in Model)
+        {
+            <div class="list-build modal" id="categoryId_@category.Id">
+                <div class="box-search-build">
+                    <div class="search-build">
+                        <i class="ti-search"></i>
+                        <input class="inputSearch" type="text" placeholder="Nhập tên sản phẩm..." />
+                    </div>
+                </div>
+                @foreach (var item in ViewBag.SelectList)
+                {
+                    @if (item.CategoryId == category.Id && item.Quantity > 0)
+                    {
+                        <div class="build-item-select">
+                            <div class="cart-left">
+                                <img class="cart-item-image" src="/admin/images/@item.Image" alt="">
+                            </div>
+                            <div class="cart-right">
+                                <p class="cart-item-name">@item.Name</p>
+                                <p class="cart-item-brand">@item.BrandName</p>
+                                <div class="box-price-cart">
+                                    @if (item.SalePrice > 0)
+                                    {
+                                        <p class="build-item-price-select">@item.SalePrice.ToString("N0")<sup>đ</sup></p>
+                                        <p class="cart-item-price-main">@item.Price.ToString("N0")<sup>₫</sup></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="build-item-price-select">@item.Price.ToString("N0")<sup>đ</sup></p>
+                                        <p class="cart-item-price-main"></p>
+                                    }
+                                    <a type="button" href="/Cart/AddToBuild?id=@item.Id" class="btn-add-build-select"><i class="ti-plus"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+        }
+
+    </div>
+</main>
+<!-- <div class="is-mobile-menu"></div> -->
+
+<a href="/Cart/CheckOut?isBuild=build">
+    <div class="order">
+        MUA NGAY
+    </div>
+</a>
+<div class="mobile-menu">
+    <ul class="menu-item">
+        <li>
+            <a href="/Home">
+                <span class="ti-home"></span>
+                <p>TRANG CHỦ</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/Category">
+                <span class="ti-layout-grid2"></span>
+                <p>DANH MỤC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item ">
+        <li>
+            <a href="/Cart">
+                <span class="ti-shopping-cart"></span>
+                <p>GIỎ HÀNG (<span class="cartNumber" style="font-size:9px;">@ViewBag.CartNumber</span>)</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item activeMenu">
+        <li>
+            <a href="/Cart/Build">
+                <span class="ti-settings"></span>
+                <p>BUILD PC</p>
+            </a>
+        </li>
+    </ul>
+    <ul class="menu-item">
+        <li>
+            <a href="/User">
+                <span class="ti-user"></span>
+                <p>TÀI KHOẢN</p>
+            </a>
+        </li>
+    </ul>
+</div>
