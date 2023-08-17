@@ -1,4 +1,4 @@
-﻿Ứng dụng Web bán PC
+﻿Ứng dụng Web bán điện thoại
 --- Các package cần cài đặt ---
 1. VKPCShop.Data
 - Microsoft.AspNetCore.Identity.EntityFrameworkCore
